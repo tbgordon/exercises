@@ -14,8 +14,10 @@ Example:
 
 $ python bowling_score.py 'X-X-X-X-X-X-X-X-X-X-XX' '45-54-36-27-09-63-81-18-90-72'
 
-will output:
+expected output:
+
 Input: X-X-X-X-X-X-X-X-X-X-XX Total: 300
+
 Input: 45-54-36-27-09-63-81-18-90-72 Total: 90
 
 Note:
