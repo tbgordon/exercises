@@ -31,7 +31,7 @@
 # - Check for the correct number of throws and frames
 # - Provide any intermediate scores - it only has to provide the final score
 
-
+import re
 import sys
 
 
@@ -46,12 +46,16 @@ def total_score(input):
     @rtype: int
     @return: Total calculated score.
     """
-    throws = parse_input(input)
-    return score(throws)
+    if not input:
+        return 0
+    return score(regex_parse(input))
 
 
 def parse_input(input):
     """
+    DEPRECATED:
+        Use 'regex_parse' instead
+
     Utility method that transforms an input string (in a predefined format)
     into a list of elements that represent each throw taken in a single game.
 
@@ -67,8 +71,6 @@ def parse_input(input):
     @return: List of integers where each element represents a single
              throw (in the order taken).
     """
-    if not input:
-        return []
     throws = []
     # iterate over each frame in the list, substitute special characters for
     # numeric values and populate the 'throws' list
@@ -91,6 +93,32 @@ def parse_input(input):
             throws.extend(map(int, frame))
     return throws
 
+def regex_parse(input):
+    """
+    Utility method that transforms an input string into a list of elements
+    that represent each throw taken in a single game. Non-numeric and invalid
+    characters (anything besides '/' or 'X') are filtered out from the
+    submitted input string.
+
+    Example:
+    An input of '01-5/-0/-23-X-X-X-X-X-X-XX' will return the following list:
+    [0, 1, 5, 5, 0, 10, 2, 3, 10, 10, 10, 10, 10, 10, 10, 10]
+
+    @type input: str
+    @param input: String of bowling scores split into frames and separated by
+                  hyphens. Strikes are represented as 'X', spares are
+                  represented as '/' and misses are represented as '0'.
+    @rtype: list
+    @return: List of integers where each element represents a single
+             throw (in the order taken).
+    """
+    # filters all non numeric characters (except for '/' and 'X') from input
+    # string and creates a list from remaining valid characters
+    f_list = list(re.sub(r'[^\d/X]', '', input))
+    # uses list comprehension and nested ternary expressions to assign the
+    # proper numeric value for each element in the sanitized list
+    return [10 - int(f_list[idx - 1]) if val is '/' else 10 if val is 'X' else
+            int(val) for idx, val in enumerate(f_list)]
 
 def score(throws, frame=1, total=0):
     """
@@ -163,7 +191,9 @@ def run_tests():
              # incomplete game with spare in 10th frame and no bonus frame
              (145, '5/-5/-5/-5/-5/-5/-5/-5/-5/-5/'),
              # extended frames (not calculated)
-             (300, 'X-X-X-X-X-X-X-X-X-X-XX-X-X-X-X-X-X')]
+             (300, 'X-X-X-X-X-X-X-X-X-X-XX-X-X-X-X-X-X'),
+             # invalid characters as delimiters
+             (280, 'X abc  X!X@X#X$X%X^X&X*X*()-0/')]
     for score, input in tests:
         result = "Testing: %s = %d: %s"
         try:

@@ -21,4 +21,4 @@ Input: X-X-X-X-X-X-X-X-X-X-XX Total: 300
 Input: 45-54-36-27-09-63-81-18-90-72 Total: 90
 
 Note:
-Script tested against python versions 2.4, 2.6, 2.7
+Script tested against python versions 2.6 & 2.7
